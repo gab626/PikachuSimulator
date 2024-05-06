@@ -16,6 +16,8 @@ def main():
     v0 = 5
     c2 = 30E-9 # c2 ed l2 inventati sul momento per disegnare il doppio notch
     l2 = 20E-3
+    rgen = 50 # aggiunti per confronto tra ampiezze con resistenze interne
+    rl = 120.41
 
     def vr(f, r, l, c): # funzione ampiezza notch singolo
         w = 2 * np.pi * f
@@ -36,6 +38,16 @@ def main():
         num = w * (l1 * y2 + l2 * y1)
         den = r * y1 * y2
         A = (1 + (num / den)**2)**(-1/2)
+        return v0 * A
+
+    def realnotch(f, r, l, c):
+        w = 2 * np.pi * f
+        y = 1 - w**2 * l * c
+        rtot = r + rgen
+        smallnum = 2 * rl * rtot + rl**2 + (w * l)**2
+        smallden = y**2 + (w * rl * c)**2
+        num = rtot**2 + (smallnum / smallden)
+        A = (num / (r**2))**(-1/2)
         return v0 * A
 
     f1 = 1 / np.sqrt(l1 * c1) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
@@ -67,16 +79,19 @@ def main():
     n1 = duenotch(xx, r1, l1, c1, l2, c2)
     n2 = duenotch(xx, r2, l1, c1, l2, c2)
     n3 = duenotch(xx, r3, l1, c1, l2, c2)
+    m1 = realnotch(x, r1, l1, c1)
+    m2 = realnotch(x, r2, l1, c1)
+    m3 = realnotch(x, r3, l1, c1)
     
     plt.figure() # grafici ampiezza notch singolo
-    plt.plot(x, y1, color='red', label='R1')
-    plt.plot(x, y2, color='blue', label='R2')
-    plt.plot(x, y3, color='green', label='R3')
+    plt.plot(x, y1, color='red', label='R1 (ideal)')
+    plt.plot(x, y2, color='blue', label='R2 (ideal)')
+    plt.plot(x, y3, color='green', label='R3 (ideal)')
     plt.xlim(100, 4500)
     plt.ylim(0, 6)
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("ampiezza (V)", fontsize=20.0)
-    plt.title("Funzione vr", fontsize=30.0, fontname='sans-serif')
+    plt.title("Ampiezze caso ideale", fontsize=30.0, fontname='sans-serif')
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
     plt.grid(True)
 
@@ -101,6 +116,18 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("ampiezza", fontsize=20.0)
     plt.title("Funzione duenotch", fontsize=30.0, fontname='sans-serif')
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
+    plt.grid(True)
+
+    plt.figure() # grafici ampiezza reale (aggiungendo gli effetti di Rgen e Rinduttanza)
+    plt.plot(x, m1, color='red', label='R1 (real)')
+    plt.plot(x, m2, color='blue', label='R2 (real)')
+    plt.plot(x, m3, color='green', label='R3 (real)')
+    plt.xlim(100, 4500)
+    plt.ylim(0, 6)
+    plt.xlabel("frequenza (Hz)", fontsize=20.0)
+    plt.ylabel("ampiezza (V)", fontsize=20.0)
+    plt.title("Ampiezze caso reale", fontsize=30.0, fontname='sans-serif')
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
     plt.grid(True)
 

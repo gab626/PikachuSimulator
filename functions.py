@@ -6,71 +6,105 @@ matplotlib.use('TkAgg')
 
 from scipy.optimize import curve_fit
 
-def main(): # dati apparato sperimentale
+def main():
     
-    r1 = 820.77
+    r1 = 820.77 # dati apparato sperimentale
     r2 = 2692
     r3 = 10012
-    c = 101.8E-9
-    l = 47.25E-3
+    c1 = 101.8E-9
+    l1 = 47.25E-3
     v0 = 5
+    c2 = 30E-9 # c2 ed l2 inventati sul momento per disegnare il doppio notch
+    l2 = 20E-3
 
-    def vr(f, r, l, c):
+    def vr(f, r, l, c): # funzione ampiezza notch singolo
         w = 2 * np.pi * f
         y = w**2 * l * c - 1
         arg = w * l / r / y
         A = (1 + arg**2)**(-1/2)
-        phi = np.arctan(arg)
-        return v0 * A * np.cos(phi) # funzione fit per ddp
+        return v0 * A
 
-    def phi(f, r, l, c):
+    def phi(f, r, l, c): # funzione differenza di fase notch singolo
         w = 2 * np.pi * f
         arg = l * w / r / (w**2 * l * c - 1)
         return np.arctan(arg)
 
-    f0 = 1 / np.sqrt(l * c) / 2 / np.pi
-    q1 = r1 * c * 2 * np.pi * f0
-    q2 = r2 * c * 2 * np.pi * f0
-    q3 = r3 * c * 2 * np.pi * f0
+    def duenotch(f, r, l1, c1, l2, c2): # funzione ampiezza doppio notch
+        w = 2 * np.pi * f
+        y1 = 1 - w**2 * l1 * c1
+        y2 = 1 - w**2 * l2 * c2
+        num = w * (l1 * y2 + l2 * y1)
+        den = r * y1 * y2
+        A = (1 + (num / den)**2)**(-1/2)
+        return v0 * A
 
-    print("frequenza di notch: ", f0)
+    f1 = 1 / np.sqrt(l1 * c1) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
+    f2 = 1 / np.sqrt(l2 * c2) / 2 / np.pi
+    q1 = r1 * c1 * 2 * np.pi * f1
+    q2 = r2 * c1 * 2 * np.pi * f1
+    q3 = r3 * c1 * 2 * np.pi * f1
+    q4 = r1 * c2 * 2 * np.pi * f2
+    q5 = r2 * c2 * 2 * np.pi * f2
+    q6 = r3 * c2 * 2 * np.pi * f2
+
+    print("FREQ NOTCH 1: ", f1) # stampa a schermo frequenze di notch e fattori di qualità
     print("Q1: ", q1)
     print("Q2: ", q2)
     print("Q3: ", q3)
+    print("FREQ NOTCH 2: ", f2)
+    print("Q1: ", q4)
+    print("Q2: ", q5)
+    print("Q3: ", q6)
 
-    x = np.linspace(100, 4500, 1000)
-    y1 = vr(x, r1, l, c)
-    y2 = vr(x, r2, l, c)
-    y3 = vr(x, r3, l, c)
-    p1 = phi(x, r1, l, c)
-    p2 = phi(x, r2, l, c)
-    p3 = phi(x, r3, l, c)
+    x = np.linspace(100, 4500, 1000) # creazione array di x e y tramite le funzioni per plottare su grafici
+    y1 = vr(x, r1, l1, c1)
+    y2 = vr(x, r2, l1, c1)
+    y3 = vr(x, r3, l1, c1)
+    p1 = phi(x, r1, l1, c1)
+    p2 = phi(x, r2, l1, c1)
+    p3 = phi(x, r3, l1, c1)
+    xx = np.linspace(100, 11000, 1000)
+    n1 = duenotch(xx, r1, l1, c1, l2, c2)
+    n2 = duenotch(xx, r2, l1, c1, l2, c2)
+    n3 = duenotch(xx, r3, l1, c1, l2, c2)
     
-    plt.figure()
+    plt.figure() # grafici ampiezza notch singolo
     plt.plot(x, y1, color='red', label='R1')
     plt.plot(x, y2, color='blue', label='R2')
     plt.plot(x, y3, color='green', label='R3')
     plt.xlim(100, 4500)
     plt.ylim(0, 6)
-    plt.xlabel("Frequenza (1/s)", fontsize=20.0)
-    plt.ylabel("Ddp misurata (V)", fontsize=20.0)
-    plt.title("Funzione Vr", fontsize=30.0, fontname='sans-serif')
+    plt.xlabel("frequenza (Hz)", fontsize=20.0)
+    plt.ylabel("ampiezza (V)", fontsize=20.0)
+    plt.title("Funzione vr", fontsize=30.0, fontname='sans-serif')
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
     plt.grid(True)
 
-    plt.figure()
+    plt.figure() # grafici differenza di fase notch singolo
     plt.plot(x, p1, color='red', label='R1')
     plt.plot(x, p2, color='blue', label='R2')
     plt.plot(x, p3, color='green', label='R3')
     plt.xlim(100, 4500)
     plt.ylim(-2, 2)
-    plt.xlabel("Frequenza (1/s)", fontsize=20.0)
-    plt.ylabel("Differenza di fase (rad)", fontsize=20.0)
+    plt.xlabel("frequenza (Hz)", fontsize=20.0)
+    plt.ylabel("differenza di fase (rad)", fontsize=20.0)
     plt.title("Funzione phi = fase Vr - fase Vg", fontsize=30.0, fontname='sans-serif')
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
     plt.grid(True)
 
-    plt.show()
+    plt.figure() # grafici ampiezza doppio notch
+    plt.plot(xx, n1, color='red', label='R1')
+    plt.plot(xx, n2, color='blue', label='R2')
+    plt.plot(xx, n3, color='green', label='R3')
+    plt.xlim(100, 11000)
+    plt.ylim(0, 6)
+    plt.xlabel("frequenza (Hz)", fontsize=20.0)
+    plt.ylabel("ampiezza", fontsize=20.0)
+    plt.title("Funzione duenotch", fontsize=30.0, fontname='sans-serif')
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
+    plt.grid(True)
+
+    plt.show() # apre le canvas con i grafici
 
 if __name__ == "__main__":
     main()

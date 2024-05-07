@@ -50,23 +50,24 @@ def main():
         A = (num / (r**2))**(-1/2)
         return v0 * A
 
+    def realphi(f, r, l, c):
+        w = 2 * np.pi * f
+        y = 1 - w**2 * l * c
+        rtot = r + rgen
+        num = w * (rl**2 * c - y * l)
+        den = rl + rtot * (y**2 + (rl * w * c)**2)
+        return np.arctan(num / den)
+
     f1 = 1 / np.sqrt(l1 * c1) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
     f2 = 1 / np.sqrt(l2 * c2) / 2 / np.pi
     q1 = r1 * c1 * 2 * np.pi * f1
     q2 = r2 * c1 * 2 * np.pi * f1
     q3 = r3 * c1 * 2 * np.pi * f1
-    q4 = r1 * c2 * 2 * np.pi * f2
-    q5 = r2 * c2 * 2 * np.pi * f2
-    q6 = r3 * c2 * 2 * np.pi * f2
 
     print("FREQ NOTCH 1: ", f1) # stampa a schermo frequenze di notch e fattori di qualità
     print("Q1: ", q1)
     print("Q2: ", q2)
     print("Q3: ", q3)
-    print("FREQ NOTCH 2: ", f2)
-    print("Q1: ", q4)
-    print("Q2: ", q5)
-    print("Q3: ", q6)
 
     x = np.linspace(100, 4500, 1000) # creazione array di x e y tramite le funzioni per plottare su grafici
     y1 = vr(x, r1, l1, c1)
@@ -82,6 +83,9 @@ def main():
     m1 = realnotch(x, r1, l1, c1)
     m2 = realnotch(x, r2, l1, c1)
     m3 = realnotch(x, r3, l1, c1)
+    t1 = realphi(x, r1, l1, c1)
+    t2 = realphi(x, r2, l1, c1)
+    t3 = realphi(x, r3, l1, c1)
     
     plt.figure() # grafici ampiezza notch singolo
     plt.plot(x, y1, color='red', label='R1 (ideal)')
@@ -96,9 +100,9 @@ def main():
     plt.grid(True)
 
     plt.figure() # grafici differenza di fase notch singolo
-    plt.plot(x, p1, color='red', label='R1')
-    plt.plot(x, p2, color='blue', label='R2')
-    plt.plot(x, p3, color='green', label='R3')
+    plt.plot(x, p1, color='red', label='R1 (ideal)')
+    plt.plot(x, p2, color='blue', label='R2 (ideal)')
+    plt.plot(x, p3, color='green', label='R3 (ideal)')
     plt.xlim(100, 4500)
     plt.ylim(-2, 2)
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
@@ -128,6 +132,18 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("ampiezza (V)", fontsize=20.0)
     plt.title("Ampiezze caso reale", fontsize=30.0, fontname='sans-serif')
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
+    plt.grid(True)
+
+    plt.figure() # grafici differenza di fase reale (aggiungendo gli effetti di Rgen e Rinduttanza)
+    plt.plot(x, t1, color='red', label='R1 (real)')
+    plt.plot(x, t2, color='blue', label='R2 (real)')
+    plt.plot(x, t3, color='green', label='R3 (real)')
+    plt.xlim(100, 4500)
+    plt.ylim(-2, 2)
+    plt.xlabel("frequenza (Hz)", fontsize=20.0)
+    plt.ylabel("differenza di fase (rad)", fontsize=20.0)
+    plt.title("Funzione phi = fase Vr - fase Vg", fontsize=30.0, fontname='sans-serif')
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) 
     plt.grid(True)
 

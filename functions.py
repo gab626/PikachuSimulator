@@ -58,17 +58,6 @@ def main():
         den = rl + rtot * (y**2 + (rl * w * c)**2)
         return np.arctan(num / den)
 
-    f1 = 1 / np.sqrt(l1 * c1) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
-    f2 = 1 / np.sqrt(l2 * c2) / 2 / np.pi
-    q1 = r1 * c1 * 2 * np.pi * f1
-    q2 = r2 * c1 * 2 * np.pi * f1
-    q3 = r3 * c1 * 2 * np.pi * f1
-
-    print("FREQ NOTCH 1: ", f1) # stampa a schermo frequenze di notch e fattori di qualità
-    print("Q1: ", q1)
-    print("Q2: ", q2)
-    print("Q3: ", q3)
-
     x = np.linspace(100, 4500, 1000) # creazione array di x e y tramite le funzioni per plottare su grafici
     y1 = vr(x, r1, l1, c1)
     y2 = vr(x, r2, l1, c1)
@@ -140,7 +129,7 @@ def main():
     plt.plot(x, t2, color='blue', label='R2 (real)')
     plt.plot(x, t3, color='green', label='R3 (real)')
     plt.xlim(100, 4500)
-    plt.ylim(-2, 2)
+    plt.ylim(-1, 1)
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("differenza di fase (rad)", fontsize=20.0)
     plt.title("Funzione phi = fase Vr - fase Vg", fontsize=30.0, fontname='sans-serif')

@@ -34,20 +34,17 @@ def main():
     print("Q2: ", q2)
     print("Q3: ", q3)
 
-    r1_phi = "r1_phi.txt" # esporta dati da file txt
-    r2_phi = "r2_phi.txt"
-    r3_phi = "r3_phi.txt"
-    x1,y1 = np.loadtxt(r1_phi, unpack=True) # mancano ancora yerr
-    x2,y2 = np.loadtxt(r2_phi, unpack=True)
-    x3,y3 = np.loadtxt(r3_phi, unpack=True)
+    x1,y1,yerr1 = np.loadtxt("r1_phi.txt", unpack=True)
+    x2,y2,yerr2 = np.loadtxt("r2_phi.txt", unpack=True)
+    x3,y3,yerr3 = np.loadtxt("r3_phi.txt", unpack=True)
 
     x = np.linspace(100, 4500, 1000)
     t1 = phase(x, r1, l1, c1)
     t2 = phase(x, r2, l1, c1)
     t3 = phase(x, r3, l1, c1)
 
-
-    plt.figure() # prossimamente aggiungere errorbars
+    plt.figure()
+    plt.errorbar(x1,y1,yerr=yerr1, linestyle= 'None', color = 'orange')
     plt.plot(x1,y1, '.', label = "dati sperimentali R1", color = 'orange', markersize=5.0)
     plt.plot(x, t1, color='red', label='R1 (expected)')
     plt.xlim(100, 4500)
@@ -55,10 +52,11 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("fase (rad)", fontsize=20.0)
     plt.title("Confronto tra fasi aspettate e sperimentali per R1", fontsize=30.0, fontname='sans-serif')
-    # plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) # per ora non mostro la legenda
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
     plt.grid(True)
 
-    plt.figure() # prossimamente aggiungere errorbars
+    plt.figure()
+    plt.errorbar(x2,y2,yerr=yerr2, linestyle= 'None', color = 'orange')
     plt.plot(x2,y2, '.', label = "dati sperimentali R2", color = 'orange', markersize=5.0)
     plt.plot(x, t2, color='blue', label='R2 (expected)')
     plt.xlim(100, 4500)
@@ -66,10 +64,11 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("fase (rad)", fontsize=20.0)
     plt.title("Confronto tra fasi aspettate e sperimentali per R2", fontsize=30.0, fontname='sans-serif')
-    # plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) # per ora non mostro la legenda
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
     plt.grid(True)
 
-    plt.figure() # prossimamente aggiungere errorbars
+    plt.figure()
+    plt.errorbar(x3,y3,yerr=yerr3, linestyle= 'None', color = 'orange')
     plt.plot(x3,y3, '.', label = "dati sperimentali R3", color = 'orange', markersize=5.0)
     plt.plot(x, t3, color='green', label='R3 (expected)')
     plt.xlim(100, 4500)
@@ -77,7 +76,7 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("fase (rad)", fontsize=20.0)
     plt.title("Confronto tra fasi aspettate e sperimentali per R3", fontsize=30.0, fontname='sans-serif')
-    # plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) # per ora non mostro la legenda
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
     plt.grid(True)
 
     plt.show()

@@ -27,7 +27,7 @@ def main():
         A = (num / (r**2))**(-1/2)
         return v0 * A
 
-    x1,y1,yerr1 = np.loadtxt("r1_amp.txt", unpack=True) # mancano ancora yerr
+    x1,y1,yerr1 = np.loadtxt("r1_amp.txt", unpack=True)
     x2,y2,yerr2 = np.loadtxt("r2_amp.txt", unpack=True)
     x3,y3,yerr3 = np.loadtxt("r3_amp.txt", unpack=True)
 
@@ -36,8 +36,7 @@ def main():
     t2 = amplitude(x, r2, l1, c1)
     t3 = amplitude(x, r3, l1, c1)
 
-
-    plt.figure() # prossimamente aggiungere errorbars
+    plt.figure()
     plt.errorbar(x1,y1,yerr=yerr1, linestyle= 'None', color = 'orange')
     plt.errorbar(x2,y2,yerr=yerr2, linestyle= 'None', color = 'orange')
     plt.errorbar(x3,y3,yerr=yerr3, linestyle= 'None', color = 'orange')
@@ -52,7 +51,7 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("ampiezza (V)", fontsize=20.0)
     plt.title("Confronto tra ampiezze aspettate e sperimentali", fontsize=30.0, fontname='sans-serif')
-    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) # per ora non mostro la legenda
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
     plt.grid(True)
 
     plt.show()

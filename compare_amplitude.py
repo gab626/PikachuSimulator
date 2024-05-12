@@ -27,21 +27,9 @@ def main():
         A = (num / (r**2))**(-1/2)
         return v0 * A
 
-    f1 = 1 / np.sqrt(l1 * c1) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
-    q1 = r1 * c1 * 2 * np.pi * f1
-    q2 = r2 * c1 * 2 * np.pi * f1
-    q3 = r3 * c1 * 2 * np.pi * f1
-    print("FREQ NOTCH 1: ", f1) # stampa a schermo frequenze di notch e fattori di qualità
-    print("Q1: ", q1)
-    print("Q2: ", q2)
-    print("Q3: ", q3)
-
-    r1_amp = "r1_amp.txt" # esporta dati da file txt
-    r2_amp = "r2_amp.txt"
-    r3_amp = "r3_amp.txt"
-    x1,y1 = np.loadtxt(r1_amp, unpack=True) # mancano ancora yerr
-    x2,y2 = np.loadtxt(r2_amp, unpack=True)
-    x3,y3 = np.loadtxt(r3_amp, unpack=True)
+    x1,y1,yerr1 = np.loadtxt("r1_amp.txt", unpack=True) # mancano ancora yerr
+    x2,y2,yerr2 = np.loadtxt("r2_amp.txt", unpack=True)
+    x3,y3,yerr3 = np.loadtxt("r3_amp.txt", unpack=True)
 
     x = np.linspace(100, 4500, 1000)
     t1 = amplitude(x, r1, l1, c1)
@@ -50,6 +38,9 @@ def main():
 
 
     plt.figure() # prossimamente aggiungere errorbars
+    plt.errorbar(x1,y1,yerr=yerr1, linestyle= 'None', color = 'orange')
+    plt.errorbar(x2,y2,yerr=yerr2, linestyle= 'None', color = 'orange')
+    plt.errorbar(x3,y3,yerr=yerr3, linestyle= 'None', color = 'orange')
     plt.plot(x1,y1, '.', label = "dati sperimentali R1", color = 'orange', markersize=5.0)
     plt.plot(x2,y2, '.', label = "dati sperimentali R2", color = 'orange', markersize=5.0)
     plt.plot(x3,y3, '.', label = "dati sperimentali R3", color = 'orange', markersize=5.0)
@@ -61,7 +52,7 @@ def main():
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("ampiezza (V)", fontsize=20.0)
     plt.title("Confronto tra ampiezze aspettate e sperimentali", fontsize=30.0, fontname='sans-serif')
-    # plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) # per ora non mostro la legenda
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0) # per ora non mostro la legenda
     plt.grid(True)
 
     plt.show()

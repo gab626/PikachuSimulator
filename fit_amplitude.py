@@ -17,14 +17,14 @@ def main():
     rgen = 50
     rl = 120.41
 
-    def amplitude(f, r1, l, c, v0, rgen, rl):
+    def amplitude(f, r, l, c, v0, rgen, rl):
         w = 2 * np.pi * f
         y = 1 - w**2 * l * c
-        rtot = r1 + rgen
+        rtot = r + rgen
         smallnum = 2 * rl * rtot + rl**2 + (w * l)**2
         smallden = y**2 + (w * rl * c)**2
         num = rtot**2 + (smallnum / smallden)
-        A = (num / (r1**2))**(-1/2)
+        A = (num / (r**2))**(-1/2)
         return v0 * A
 
     f = 1 / np.sqrt(l * c) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità

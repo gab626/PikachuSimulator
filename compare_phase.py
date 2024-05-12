@@ -25,15 +25,6 @@ def main():
         den = rl + rtot * (y**2 + (rl * w * c)**2)
         return np.arctan(num / den)
 
-    f1 = 1 / np.sqrt(l1 * c1) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
-    q1 = r1 * c1 * 2 * np.pi * f1
-    q2 = r2 * c1 * 2 * np.pi * f1
-    q3 = r3 * c1 * 2 * np.pi * f1
-    print("FREQ NOTCH 1: ", f1) # stampa a schermo frequenze di notch e fattori di qualità
-    print("Q1: ", q1)
-    print("Q2: ", q2)
-    print("Q3: ", q3)
-
     x1,y1,yerr1 = np.loadtxt("r1_phi.txt", unpack=True)
     x2,y2,yerr2 = np.loadtxt("r2_phi.txt", unpack=True)
     x3,y3,yerr3 = np.loadtxt("r3_phi.txt", unpack=True)

@@ -42,9 +42,12 @@ def main():
     P1 = [r1, l, c, rgen, rl, b0] # parametri liberi per i fit
     P2 = [r2, l, c, rgen, rl, b0]
     P3 = [r3, l, c, rgen, rl, b0]
-    popt1, pcov1 = curve_fit(phase, x1, y1, p0=P1, sigma=yerr1, maxfev=50000) # fit (serve aggiungere bounds)
-    popt2, pcov2 = curve_fit(phase, x2, y2, p0=P2, sigma=yerr2, maxfev=50000)
-    popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3, maxfev=50000)
+    popt1, pcov1 = curve_fit(phase, x1, y1, p0=P1, sigma=yerr1,
+                             bounds=([r1-.5, l-.5, c-1., rgen-10., rl-.2, b0 -.1], [r1+.5, l+.5, c+1., rgen+10., rl+.2, b0 +.1]), maxfev=50000) # fit
+    popt2, pcov2 = curve_fit(phase, x2, y2, p0=P2, sigma=yerr2,
+                             bounds=([r2-2., l-.5, c-1., rgen-10., rl-.2, b0 -.1], [r2+2., l+.5, c+1., rgen+10., rl+.2, b0 +.1]), maxfev=50000)
+    popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3,
+                             bounds=([r3-15., l-.5, c-1., rgen-10., rl-.2, b0 -.1], [r3+15., l+.5, c+1., rgen+10., rl+.2, b0 +.1]), maxfev=50000)
 
     print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2],
           "\nRgen: ", popt1[3], "\nRl: ", popt1[4], "\nb0: ", popt1[5], "\n\n") # stampa parametri dal fit (senza errori)

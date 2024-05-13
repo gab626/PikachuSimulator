@@ -9,12 +9,12 @@ from scipy.optimize import curve_fit
 def main():
 
     r1 = 820.77 # dati apparato sperimentale
-    r2 = 2692
-    r3 = 10012
+    r2 = 2692.
+    r3 = 10012.
     c = 101.8E-9
     l = 47.25E-3
-    v0 = 5
-    rgen = 50
+    v0 = 5.
+    rgen = 50.
     rl = 120.41
 
     def amplitude(f, r, l, c, v0, rgen, rl):
@@ -43,9 +43,12 @@ def main():
     P1 = [r1, l, c, v0, rgen, rl] # parametri liberi per i fit
     P2 = [r2, l, c, v0, rgen, rl]
     P3 = [r3, l, c, v0, rgen, rl]
-    popt1, pcov1 = curve_fit(amplitude, x1, y1, p0=P1, sigma=yerr1, maxfev=50000) # fit (serve aggiungere bounds)
-    popt2, pcov2 = curve_fit(amplitude, x2, y2, p0=P2, sigma=yerr2, maxfev=50000)
-    popt3, pcov3 = curve_fit(amplitude, x3, y3, p0=P3, sigma=yerr3, maxfev=50000)
+    popt1, pcov1 = curve_fit(amplitude, x1, y1, p0=P1, sigma=yerr1,
+                             bounds=([r1-.5, l-.5, c-1., v0-1., rgen-10., rl-.2], [r1+.5, l+.5, c+1., v0+1., rgen+10., rl+.2]), maxfev=50000) # fit
+    popt2, pcov2 = curve_fit(amplitude, x2, y2, p0=P2, sigma=yerr2,
+                             bounds=([r2-2., l-.5, c-1., v0-1., rgen-10., rl-.2], [r2+2., l+.5, c+1., v0+1., rgen+10., rl+.2]), maxfev=50000)
+    popt3, pcov3 = curve_fit(amplitude, x3, y3, p0=P3, sigma=yerr3,
+                             bounds=([r3-15., l-.5, c-1., v0-1., rgen-10., rl-.2], [r3+15., l+.5, c+1., v0+1., rgen+10., rl+.2]), maxfev=50000)
 
     print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2], "\nV0: ", popt1[3],
           "\nRgen: ", popt1[4], "\nRl: ", popt1[5], "\n\n") # stampa parametri dal fit (senza errori)

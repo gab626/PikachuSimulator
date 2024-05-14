@@ -13,18 +13,17 @@ def main():
     r3 = 10012
     c = 101.8E-9
     l = 47.25E-3
-    v0 = 5
     rgen = 50
     rl = 120.41
-    b0 = 0.15
+    m = 1.36E-5
 
-    def phase(f, r, l, c, rgen, rl, b0): # MANCA FONDO COSTANTE
+    def phase(f, r, l, c, rgen, rl, m): # MANCA FONDO COSTANTE
         w = 2 * np.pi * f
         y = 1 - w**2 * l * c
         rtot = r + rgen
         num = w * (rl**2 * c - y * l)
         den = rl + rtot * (y**2 + (rl * w * c)**2)
-        return np.arctan(num / den) + b0
+        return np.arctan(num / den) + m*f
 
     f1 = 1 / np.sqrt(l * c) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
     q1 = r1 * c * 2 * np.pi * f1
@@ -39,22 +38,19 @@ def main():
     x2,y2,yerr2 = np.loadtxt("r2_phi.txt", unpack=True)
     x3,y3,yerr3 = np.loadtxt("r3_phi.txt", unpack=True)
 
-    P1 = [r1, l, c, rgen, rl, b0] # parametri liberi per i fit
-    P2 = [r2, l, c, rgen, rl, b0]
-    P3 = [r3, l, c, rgen, rl, b0]
-    popt1, pcov1 = curve_fit(phase, x1, y1, p0=P1, sigma=yerr1,
-                             bounds=([r1-.5, l-.5, c-1., rgen-10., rl-.2, b0 -.1], [r1+.5, l+.5, c+1., rgen+10., rl+.2, b0 +.1]), maxfev=50000) # fit
-    popt2, pcov2 = curve_fit(phase, x2, y2, p0=P2, sigma=yerr2,
-                             bounds=([r2-2., l-.5, c-1., rgen-10., rl-.2, b0 -.1], [r2+2., l+.5, c+1., rgen+10., rl+.2, b0 +.1]), maxfev=50000)
-    popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3,
-                             bounds=([r3-15., l-.5, c-1., rgen-10., rl-.2, b0 -.1], [r3+15., l+.5, c+1., rgen+10., rl+.2, b0 +.1]), maxfev=50000)
+    P1 = [r1, l, c, rgen, rl, m] # parametri liberi per i fit
+    P2 = [r2, l, c, rgen, rl, m]
+    P3 = [r3, l, c, rgen, rl, m]
+    popt1, pcov1 = curve_fit(phase, x1, y1, p0=P1, sigma=yerr1, maxfev=50000) # fit
+    popt2, pcov2 = curve_fit(phase, x2, y2, p0=P2, sigma=yerr2, maxfev=50000)
+    popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3, maxfev=50000)
 
     print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2],
-          "\nRgen: ", popt1[3], "\nRl: ", popt1[4], "\nb0: ", popt1[5], "\n\n") # stampa parametri dal fit (senza errori)
+          "\nRgen: ", popt1[3], "\nRl: ", popt1[4], "\nm: ", popt1[5], "\n\n") # stampa parametri dal fit (senza errori)
     print("\nR2: ", popt2[0], "\nL: ", popt2[1], "\nC: ", popt2[2],
-          "\nRgen: ", popt2[3], "\nRl: ", popt2[4], "\nb0: ", popt2[5], "\n\n")
+          "\nRgen: ", popt2[3], "\nRl: ", popt2[4], "\nm: ", popt2[5], "\n\n")
     print("\nR3: ", popt3[0], "\nL: ", popt3[1], "\nC: ", popt3[2],
-          "\nRgen: ", popt3[3], "\nRl: ", popt3[4], "\nb0: ", popt3[5], "\n\n")
+          "\nRgen: ", popt3[3], "\nRl: ", popt3[4], "\nm: ", popt3[5], "\n\n")
     
     plt.figure()
     plt.errorbar(x1,y1,yerr=yerr1, linestyle= 'None', color = 'orange')

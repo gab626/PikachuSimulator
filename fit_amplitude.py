@@ -17,7 +17,7 @@ def main():
     rgen = 50.
     rl = 120.41
 
-    def amplitude(f, r, l, c, v0, rgen, rl):
+    def amplitude(f, r, l, c, v0, rl, rgen):
         w = 2 * np.pi * f
         y = 1 - w**2 * l * c
         rtot = r + rgen
@@ -46,18 +46,18 @@ def main():
     x2,y2,yerr2 = np.loadtxt("r2_amp.txt", unpack=True)
 #     x3,y3,yerr3 = np.loadtxt("r3_amp.txt", unpack=True)
 
-    P1 = [r1, l, c, v0, rgen, rl] # parametri liberi per i fit
-    P2 = [r2, l, c, v0, rgen, rl]
-    P3 = [r3, l, c, v0, rgen, rl]
-    popt1, pcov1 = curve_fit(amplitude, x1, y1, p0=P1, sigma=yerr1, maxfev=50000) # fit
-    popt2, pcov2 = curve_fit(amplitude, x2, y2, p0=P2, sigma=yerr2, maxfev=50000)
+    P1 = [r1, l, c, v0, rl, rgen] # parametri liberi per i fit
+    P2 = [r2, l, c, v0, rl, rgen]
+    P3 = [r3, l, c, v0, rl, rgen]
+    popt1, pcov1 = curve_fit(amplitude, x1, y1, p0=P1, sigma=yerr1,
+                             bounds=([r1 - 200, l - 1E-2, c - 1E-5, v0 - 1, rl - 50, rgen - 20], [r1 + 200, l + 1E-2, c + 1E-5, v0 + 1, rl + 50, rgen + 20]), maxfev=50000) # fit
+    popt2, pcov2 = curve_fit(amplitude, x2, y2, p0=P2, sigma=yerr2,
+                             bounds=([r2 - 500, l - 1E-2, c - 1E-5, v0 - 1, rl - 50, rgen - 20], [r2 + 500, l + 1E-2, c + 1E-5, v0 + 1, rl + 50, rgen + 20]), maxfev=50000)
 #     popt3, pcov3 = curve_fit(amplitude, x3, y3, p0=P3, sigma=yerr3, maxfev=50000)
 
-    print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2], "\nV0: ", popt1[3],
-          "\nRgen: ", popt1[4], "\nRl: ", popt1[5],
+    print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2], "\nV0: ", popt1[3], "\nRl: ", popt1[4], "\nRgen: ", popt1[5],
            "\nX2 / ndf: ", rcs(x1, y1, yerr1, popt1), "\n\n") # stampa parametri dal fit (senza errori)
-    print("\nR2: ", popt2[0], "\nL: ", popt2[1], "\nC: ", popt2[2], "\nV0: ", popt2[3],
-          "\nRgen: ", popt2[4], "\nRl: ", popt2[5],
+    print("\nR2: ", popt2[0], "\nL: ", popt2[1], "\nC: ", popt2[2], "\nV0: ", popt2[3], "\nRl: ", popt1[4], "\nRgen: ", popt1[5],
            "\nX2 / ndf: ", rcs(x2, y2, yerr2, popt2), "\n\n")
 #     print("\nR3: ", popt3[0], "\nL: ", popt3[1], "\nC: ", popt3[2], "\nV0: ", popt3[3],
       #     "\nRgen: ", popt3[4], "\nRl: ", popt3[5], "\n\n")

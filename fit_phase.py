@@ -42,7 +42,7 @@ def main():
 
     x1,y1,yerr1 = np.loadtxt("r1_phi.txt", unpack=True)
     x2,y2,yerr2 = np.loadtxt("r2_phi.txt", unpack=True)
-#     x3,y3,yerr3 = np.loadtxt("r3_phi.txt", unpack=True)
+    x3,y3,yerr3 = np.loadtxt("r3_phi.txt", unpack=True)
 
     P1 = [r1, l, c, m, rl] # parametri liberi per i fit
     P2 = [r2, l, c, m, rl]
@@ -51,21 +51,22 @@ def main():
                              bounds=([r1 - 80, l - 5E-3, c - 1E-8, m - 1E-6, rl - 15], [r1 + 80, l + 5E-3, c + 1E-8, m + 2E-6, rl + 15]), maxfev=50000) # fit
     popt2, pcov2 = curve_fit(phase, x2, y2, p0=P2, sigma=yerr2,
                              bounds=([r2 - 270, l - 5E-3, c - 1E-8, m - 1E-6, rl - 15], [r2 + 270, l + 5E-3, c + 1E-5, m + 2E-6, rl + 15]), maxfev=50000)
-#     popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3, maxfev=50000)
+    popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3,
+                             bounds=([r3 - 1000, l - 5E-3, c - 1E-8, m - 1E-6, rl - 15], [r3 + 1000, l + 5E-3, c + 1E-5, m + 2E-6, rl + 15]), maxfev=50000)
 
     print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2], "\nm: ", popt1[3], "\nRl: ", popt1[4],
-           "\nX2 / ndf: ", rcs(x1, y1, yerr1, popt1), "\n\n") # stampa parametri dal fit (senza errori)
+           "\nX2 / ndf: ", rcs(x1, y1, yerr1, popt1), "\n") # stampa parametri dal fit (senza errori)
     print("\nR2: ", popt2[0], "\nL: ", popt2[1], "\nC: ", popt2[2], "\nm: ", popt2[3], "\nRl: ", popt1[4],
-           "\nX2 / ndf: ", rcs(x2, y2, yerr2, popt2), "\n\n")
-#     print("\nR3: ", popt3[0], "\nL: ", popt3[1], "\nC: ", popt3[2],
-      #     "\nRgen: ", popt3[3], "\nRl: ", popt3[4], "\nm: ", popt3[5], "\n\n")
+           "\nX2 / ndf: ", rcs(x2, y2, yerr2, popt2), "\n")
+    print("\nR3: ", popt3[0], "\nL: ", popt3[1], "\nC: ", popt3[2], "\nm: ", popt3[3], "\nRl: ", popt3[4],
+           "\nX2 / ndf: ", rcs(x3, y3, yerr3, popt3), "\n")
     
     plt.figure()
     plt.errorbar(x1,y1,yerr=yerr1, linestyle= 'None', color = 'orange')
     plt.plot(x1,y1, '.', label = "dati sperimentali R1", color = 'orange', markersize=7.0)
     plt.plot(x1, phase(x1, *popt1), color = 'red', label = "R1 fit")
     plt.xlim(100, 4500)
-    plt.ylim(-1.25, 1.25)
+    plt.ylim(-1, 1)
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("fase (rad)", fontsize=20.0)
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
@@ -76,22 +77,22 @@ def main():
     plt.plot(x2,y2, '.', label = "dati sperimentali R2", color = 'teal', markersize=7.0)
     plt.plot(x2, phase(x2, *popt2), color = 'blue', label = "R2 fit")
     plt.xlim(100, 4500)
-    plt.ylim(-1, 1)
+    plt.ylim(-0.75, 0.75)
     plt.xlabel("frequenza (Hz)", fontsize=20.0)
     plt.ylabel("fase (rad)", fontsize=20.0)
     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
     plt.grid(True)
 
-#     plt.figure()
-#     plt.errorbar(x3,y3,yerr=yerr3, linestyle= 'None', color = 'orange')
-#     plt.plot(x3,y3, '.', label = "dati sperimentali R3", color = 'orange', markersize=7.0)
-#     plt.plot(x3, phase(x3, *popt3), color = 'green', label = "R3 fit")
-#     plt.xlim(100, 4500)
-#     plt.ylim(-1, 1)
-#     plt.xlabel("frequenza (Hz)", fontsize=20.0)
-#     plt.ylabel("fase (rad)", fontsize=20.0)
-#     plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
-#     plt.grid(True)
+    plt.figure()
+    plt.errorbar(x3,y3,yerr=yerr3, linestyle= 'None', color = 'yellowgreen')
+    plt.plot(x3,y3, '.', label = "dati sperimentali R3", color = 'yellowgreen', markersize=7.0)
+    plt.plot(x3, phase(x3, *popt3), color = 'green', label = "R3 fit")
+    plt.xlim(100, 4500)
+    plt.ylim(-0.5, 0.5)
+    plt.xlabel("frequenza (Hz)", fontsize=20.0)
+    plt.ylabel("fase (rad)", fontsize=20.0)
+    plt.legend(loc='upper left', fontsize=14.0, markerscale=2.0)
+    plt.grid(True)
 
     plt.show()
 

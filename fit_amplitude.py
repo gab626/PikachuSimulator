@@ -16,6 +16,8 @@ def main():
     v0 = 5.
     rgen = 50.
     rl = 120.41
+    dl = 0.4725E-3
+    dc = 1.018E-9
 
     def amplitude(f, r, l, c, v0, rl): # funzione ampiezza
         w = 2 * np.pi * f
@@ -32,11 +34,16 @@ def main():
         chi_squared = np.sum(((residuals/yerr)**2))
         ndof = len(x) - len(popt)
         return chi_squared / ndof
+    
+    def deltaf(l, c, dl, dc):
+        a = dl / (2 * np.sqrt(c * l**3))
+        b = dc / (2 * np.sqrt(l * c**3))
+        return (a + b)
 
     f = 1 / np.sqrt(l * c) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
-    q1 = r1 * c * 2 * np.pi * f
-    q2 = r2 * c * 2 * np.pi * f
-    q3 = r3 * c * 2 * np.pi * f
+    # q1 = r1 * c * 2 * np.pi * f
+    # q2 = r2 * c * 2 * np.pi * f
+    # q3 = r3 * c * 2 * np.pi * f
 #     print("Q1: ", q1)
 #     print("Q2: ", q2)
 #     print("Q3: ", q3)
@@ -71,7 +78,7 @@ def main():
     f1 = 1 / (2 * np.pi * np.sqrt(popt1[1] * popt1[2]))
     f2 = 1 / (2 * np.pi * np.sqrt(popt2[1] * popt2[2]))
     f3 = 1 / (2 * np.pi * np.sqrt(popt3[1] * popt3[2]))
-    print("FREQ NOTCH ASPETTATA: ", f , " ± ", "77.7 Hz" )
+    print("FREQ NOTCH ASPETTATA: ", f , " ± ", deltaf(l, c, dl, dc) )
     print("FREQ NOTCH DA FIT SENZA INCERTEZZE")
     print("Da fit di R1: ", f1)
     print("Da fit di R2: ", f2)

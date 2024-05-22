@@ -31,14 +31,13 @@ def main():
         ndof = len(x) - len(popt)
         return chi_squared / ndof
 
-    f1 = 1 / np.sqrt(l * c) / 2 / np.pi # calcolo frequenze di notch e fattori di qualità
-    q1 = r1 * c * 2 * np.pi * f1
-    q2 = r2 * c * 2 * np.pi * f1
-    q3 = r3 * c * 2 * np.pi * f1
-    print("FREQ NOTCH 1: ", f1) # stampa a schermo frequenze di notch e fattori di qualità
-    print("Q1: ", q1)
-    print("Q2: ", q2)
-    print("Q3: ", q3)
+    f = 1 / np.sqrt(l * c) / 2 / np.pi
+    q1 = r1 * c * 2 * np.pi * f
+    q2 = r2 * c * 2 * np.pi * f
+    q3 = r3 * c * 2 * np.pi * f
+    # print("Q1: ", q1)
+    # print("Q2: ", q2)
+    # print("Q3: ", q3)
 
     x1,y1,yerr1 = np.loadtxt("r1_phi.txt", unpack=True)
     x2,y2,yerr2 = np.loadtxt("r2_phi.txt", unpack=True)
@@ -54,12 +53,27 @@ def main():
     popt3, pcov3 = curve_fit(phase, x3, y3, p0=P3, sigma=yerr3,
                              bounds=([r3 - 1000, l - 5E-3, c - 1E-8, m - 1E-6, rl - 15], [r3 + 1000, l + 5E-3, c + 1E-5, m + 2E-6, rl + 15]), maxfev=50000)
 
-    print("\nR1: ", popt1[0], "\nL: ", popt1[1], "\nC: ", popt1[2], "\nm: ", popt1[3], "\nRl: ", popt1[4],
-           "\nX2 / ndf: ", rcs(x1, y1, yerr1, popt1), "\n") # stampa parametri dal fit (senza errori)
-    print("\nR2: ", popt2[0], "\nL: ", popt2[1], "\nC: ", popt2[2], "\nm: ", popt2[3], "\nRl: ", popt1[4],
-           "\nX2 / ndf: ", rcs(x2, y2, yerr2, popt2), "\n")
-    print("\nR3: ", popt3[0], "\nL: ", popt3[1], "\nC: ", popt3[2], "\nm: ", popt3[3], "\nRl: ", popt3[4],
-           "\nX2 / ndf: ", rcs(x3, y3, yerr3, popt3), "\n")
+    rcs1 = rcs(x1, y1, yerr1, popt1)
+    rcs2 = rcs(x2, y2, yerr2, popt2)
+    rcs3 = rcs(x3, y3, yerr3, popt3)
+    print("\nR1: ", popt1[0], " ± ", np.sqrt(pcov1[0,0]), "\nL: ", popt1[1], " ± ", np.sqrt(pcov1[1,1]),
+          "\nC: ", popt1[2], " ± ", np.sqrt(pcov1[2,2]), "\nm: ", popt1[3], " ± ", np.sqrt(pcov1[3,3]),
+          "\nRl: ", popt1[4]," ± ", np.sqrt(pcov1[4,4]), "\nX2 / ndf: ", rcs1, "\n")
+    print("\nR2: ", popt2[0], " ± ", np.sqrt(pcov2[0,0]), "\nL: ", popt2[1], " ± ", np.sqrt(pcov2[1,1]),
+          "\nC: ", popt2[2], " ± ", np.sqrt(pcov2[2,2]), "\nm: ", popt2[3], " ± ", np.sqrt(pcov2[3,3]),
+          "\nRl: ", popt2[4]," ± ", np.sqrt(pcov2[4,4]), "\nX2 / ndf: ", rcs2, "\n")
+    print("\nR3: ", popt3[0], " ± ", np.sqrt(pcov3[0,0]), "\nL: ", popt3[1], " ± ", np.sqrt(pcov3[1,1]),
+          "\nC: ", popt3[2], " ± ", np.sqrt(pcov3[2,2]), "\nm: ", popt3[3], " ± ", np.sqrt(pcov3[3,3]),
+          "\nRl: ", popt3[4]," ± ", np.sqrt(pcov3[4,4]), "\nX2 / ndf: ", rcs3, "\n\n")
+    
+    f1 = 1 / (2 * np.pi * np.sqrt(popt1[1] * popt1[2]))
+    f2 = 1 / (2 * np.pi * np.sqrt(popt2[1] * popt2[2]))
+    f3 = 1 / (2 * np.pi * np.sqrt(popt3[1] * popt3[2]))
+    print("FREQ NOTCH ASPETTATA: ", f , " ± ", "77.7 Hz" )
+    print("FREQ NOTCH DA FIT SENZA INCERTEZZE")
+    print("Da fit di R1: ", f1)
+    print("Da fit di R2: ", f2)
+    print("Da fit di R3: ", f3)
     
     plt.figure()
     plt.errorbar(x1,y1,yerr=yerr1, linestyle= 'None', color = 'orange')
